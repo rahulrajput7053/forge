@@ -1,56 +1,121 @@
 
-import React, { useState, useEffect } from 'react';
-import { CrmApp } from './CrmApp';
-import EcommApp from './EcommApp';
-import { INITIAL_PRODUCTS } from './constants';
-import type { Product } from './types';
-import './index.css';
+// import React, { useState, useEffect } from 'react';
+// import { CrmApp } from './CrmApp';
+// import EcommApp from './EcommApp';
+// import { INITIAL_PRODUCTS } from './constants';
+// import type { Product } from './types';
+// import './index.css';
 
-type AppView = 'crm' | 'ecomm';
+// type AppView = 'crm' | 'ecomm';
 
-function App() {
-  const [view, setView] = useState<AppView>('ecomm');
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS || []);
+// function App() {
+//   const [view, setView] = useState<AppView>('ecomm');
+//   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS || []);
+
+//   useEffect(() => {
+//     document.title = view === 'crm' ? 'InsightCRM | Admin' : 'Forge Fabric | Streetwear';
+//   }, [view]);
+
+//   const showCrm = () => setView('crm');
+//   const showEcomm = () => setView('ecomm');
+  
+//   const handleAddProduct = (productData: Omit<Product, 'id'>) => {
+//     const newProduct: Product = {
+//       ...productData,
+//       id: Date.now(),
+//     };
+//     setProducts(prevProducts => [newProduct, ...(prevProducts || [])]);
+//   };
+
+//   const handleUpdateProduct = (updatedProduct: Product) => {
+//     setProducts(prevProducts =>
+//       (prevProducts || []).map(p => (p.id === updatedProduct.id ? updatedProduct : p))
+//     );
+//   };
+
+//   const handleDeleteProduct = (productId: number) => {
+//     setProducts(prevProducts => (prevProducts || []).filter(p => p.id !== productId));
+//   };
+
+//   return (
+//     <div className="App font-sans selection:bg-accent selection:text-white">
+//         {view === 'crm' && (
+//             <CrmApp
+//                 onLaunchEcomm={showEcomm}
+//                 products={products}
+//                 onAddProduct={handleAddProduct}
+//                 onUpdateProduct={handleUpdateProduct}
+//                 onDeleteProduct={handleDeleteProduct}
+//             />
+//         )}
+//         {view === 'ecomm' && <EcommApp onBackToCrm={showCrm} products={products} />}
+//     </div>
+//   );
+// }
+
+// export default App;
+
+import { useState, useEffect } from "react";
+import CrmApp from "./CrmApp";
+import EcommApp from "./EcommApp";
+import { INITIAL_PRODUCTS } from "./constants";
+import type { Product } from "./types";
+import "./index.css";
+
+type AppView = "crm" | "ecomm";
+
+export default function App() {
+  const [view, setView] = useState<AppView>("ecomm");
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS ?? []);
 
   useEffect(() => {
-    document.title = view === 'crm' ? 'InsightCRM | Admin' : 'Forge Fabric | Streetwear';
+    document.title =
+      view === "crm"
+        ? "InsightCRM | Admin"
+        : "Forge Fabric | Streetwear";
   }, [view]);
 
-  const showCrm = () => setView('crm');
-  const showEcomm = () => setView('ecomm');
-  
-  const handleAddProduct = (productData: Omit<Product, 'id'>) => {
+  const showCrm = () => setView("crm");
+  const showEcomm = () => setView("ecomm");
+
+  const handleAddProduct = (productData: Omit<Product, "id">) => {
     const newProduct: Product = {
       ...productData,
       id: Date.now(),
     };
-    setProducts(prevProducts => [newProduct, ...(prevProducts || [])]);
+
+    setProducts((prev) => [newProduct, ...prev]);
   };
 
   const handleUpdateProduct = (updatedProduct: Product) => {
-    setProducts(prevProducts =>
-      (prevProducts || []).map(p => (p.id === updatedProduct.id ? updatedProduct : p))
+    setProducts((prev) =>
+      prev.map((p) =>
+        p.id === updatedProduct.id ? updatedProduct : p
+      )
     );
   };
 
   const handleDeleteProduct = (productId: number) => {
-    setProducts(prevProducts => (prevProducts || []).filter(p => p.id !== productId));
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
   };
 
   return (
-    <div className="App font-sans selection:bg-accent selection:text-white">
-        {view === 'crm' && (
-            <CrmApp
-                onLaunchEcomm={showEcomm}
-                products={products}
-                onAddProduct={handleAddProduct}
-                onUpdateProduct={handleUpdateProduct}
-                onDeleteProduct={handleDeleteProduct}
-            />
-        )}
-        {view === 'ecomm' && <EcommApp onBackToCrm={showCrm} products={products} />}
+    <div className="font-sans selection:bg-accent selection:text-white">
+      {view === "crm" ? (
+        <CrmApp
+          onLaunchEcomm={showEcomm}
+          products={products}
+          onAddProduct={handleAddProduct}
+          onUpdateProduct={handleUpdateProduct}
+          onDeleteProduct={handleDeleteProduct}
+        />
+      ) : (
+        <EcommApp
+          onBackToCrm={showCrm}
+          products={products}
+        />
+      )}
     </div>
   );
 }
 
-export default App;
