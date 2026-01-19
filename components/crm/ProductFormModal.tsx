@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import type { Product } from '../../types';
 import { XIcon } from '../IconComponents';
@@ -50,42 +51,42 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ product, onClose, o
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
-            <div className="bg-component-bg border border-border-color rounded-xl shadow-lg w-full max-w-md mx-4">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+            <div className="bg-component-bg border border-border-color rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
                 <form onSubmit={handleSubmit}>
-                    <div className="p-6 border-b border-border-color flex justify-between items-center">
-                        <h3 className="text-lg font-semibold text-text-primary">{product ? 'Edit Product' : 'Add New Product'}</h3>
-                        <button type="button" onClick={onClose} className="text-text-secondary hover:text-text-primary">
+                    <div className="p-6 border-b border-border-color flex justify-between items-center bg-black/20">
+                        <h3 className="text-lg font-bold text-text-primary uppercase tracking-tight">{product ? 'Update Collection Item' : 'Add New Item'}</h3>
+                        <button type="button" onClick={onClose} className="text-text-secondary hover:text-white transition-colors">
                             <XIcon className="w-5 h-5" />
                         </button>
                     </div>
-                    <div className="p-6 space-y-4">
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-text-secondary mb-1">Product Name</label>
-                            <input type="text" name="name" id="name" value={formData.name} onChange={handleChange} required className="w-full bg-base-bg border border-border-color rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                    <div className="p-6 space-y-5">
+                        <div className="space-y-1">
+                            <label htmlFor="name" className="block text-[10px] font-black text-text-secondary uppercase tracking-widest">Product Name</label>
+                            <input type="text" name="name" id="name" value={formData.name} onChange={handleChange} required className="w-full bg-black border border-border-color rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:border-accent transition-colors" />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                           <div>
-                                <label htmlFor="price" className="block text-sm font-medium text-text-secondary mb-1">Price</label>
-                                <input type="number" name="price" id="price" value={formData.price} onChange={handleChange} required step="0.01" className="w-full bg-base-bg border border-border-color rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                           <div className="space-y-1">
+                                <label htmlFor="price" className="block text-[10px] font-black text-text-secondary uppercase tracking-widest">Base Price (₹)</label>
+                                <input type="number" name="price" id="price" value={formData.price} onChange={handleChange} required step="1" className="w-full bg-black border border-border-color rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:border-accent transition-colors" />
                             </div>
-                            <div>
-                                <label htmlFor="offerPrice" className="block text-sm font-medium text-text-secondary mb-1">Offer Price <span className="text-xs">(optional)</span></label>
-                                <input type="number" name="offerPrice" id="offerPrice" value={formData.offerPrice || ''} onChange={handleChange} placeholder="e.g. 19.99" step="0.01" className="w-full bg-base-bg border border-border-color rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                            <div className="space-y-1">
+                                <label htmlFor="offerPrice" className="block text-[10px] font-black text-text-secondary uppercase tracking-widest">Sale Price (₹)</label>
+                                <input type="number" name="offerPrice" id="offerPrice" value={formData.offerPrice || ''} onChange={handleChange} placeholder="Optional" step="1" className="w-full bg-black border border-border-color rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:border-accent transition-colors" />
                             </div>
                         </div>
-                        <div>
-                            <label htmlFor="category" className="block text-sm font-medium text-text-secondary mb-1">Category</label>
-                            <input type="text" name="category" id="category" value={formData.category} onChange={handleChange} required className="w-full bg-base-bg border border-border-color rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                        <div className="space-y-1">
+                            <label htmlFor="category" className="block text-[10px] font-black text-text-secondary uppercase tracking-widest">Category</label>
+                            <input type="text" name="category" id="category" value={formData.category} onChange={handleChange} required placeholder="e.g. Outerwear" className="w-full bg-black border border-border-color rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:border-accent transition-colors" />
                         </div>
-                         <div>
-                            <label htmlFor="imageUrl" className="block text-sm font-medium text-text-secondary mb-1">Image URL</label>
-                            <input type="text" name="imageUrl" id="imageUrl" value={formData.imageUrl} onChange={handleChange} required className="w-full bg-base-bg border border-border-color rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                         <div className="space-y-1">
+                            <label htmlFor="imageUrl" className="block text-[10px] font-black text-text-secondary uppercase tracking-widest">Image URL</label>
+                            <input type="text" name="imageUrl" id="imageUrl" value={formData.imageUrl} onChange={handleChange} required className="w-full bg-black border border-border-color rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:border-accent transition-colors text-xs" />
                         </div>
                     </div>
-                    <div className="px-6 py-4 bg-base-bg/50 border-t border-border-color flex justify-end gap-3 rounded-b-xl">
-                        <button type="button" onClick={onClose} className="bg-component-bg border border-border-color text-text-primary font-semibold py-2 px-4 rounded-lg hover:bg-border-color/50 transition-colors">Cancel</button>
-                        <button type="submit" className="bg-accent text-white font-semibold py-2 px-4 rounded-lg hover:bg-accent-hover transition-colors">Save Product</button>
+                    <div className="px-6 py-4 bg-black/40 border-t border-border-color flex justify-end gap-3">
+                        <button type="button" onClick={onClose} className="text-text-secondary font-bold text-xs uppercase tracking-widest px-4 hover:text-white transition-colors">Cancel</button>
+                        <button type="submit" className="bg-accent text-white font-bold py-2.5 px-6 rounded-lg hover:bg-accent-hover transition-colors uppercase tracking-widest text-xs">Save Changes</button>
                     </div>
                 </form>
             </div>

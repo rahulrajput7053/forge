@@ -10,22 +10,36 @@ interface ShopPageProps {
     onQuickView: (product: Product) => void;
 }
 
-const ShopPage: React.FC<ShopPageProps> = ({ products, onAddToCart, onQuickView }) => {
-    const categories = useMemo(() => ['All', ...Array.from(new Set(products.map(p => p.category)))], [products]);
+const ShopPage: React.FC<ShopPageProps> = ({ products = [], onAddToCart, onQuickView }) => {
+    // Robust safety check for products array
+    const safeProducts = Array.isArray(products) ? products : [];
+    
+    const categories = useMemo(() => {
+        const uniqueCategories = Array.from(new Set(safeProducts.map(p => p.category)));
+        return ['All', ...uniqueCategories];
+    }, [safeProducts]);
+
     const [activeCategory, setActiveCategory] = useState('All');
 
     const filteredProducts = useMemo(() => {
         if (activeCategory === 'All') {
-            return products;
+            return safeProducts;
         }
-        return products.filter(p => p.category === activeCategory);
-    }, [products, activeCategory]);
+        return safeProducts.filter(p => p.category === activeCategory);
+    }, [safeProducts, activeCategory]);
 
     return (
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <h1 className="text-3xl font-bold text-text-primary mb-8 text-center">Our Collection</h1>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-12 py-12">
+            <header className="mb-12">
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-text-primary uppercase mb-4">
+                    Collections
+                </h1>
+                <p className="text-text-secondary max-w-xl">
+                    Explore our latest drops and urban essentials. Designed for those who define their own style.
+                </p>
+            </header>
             
-            <div className="mb-8">
+            <div className="mb-12 sticky top-[4rem] z-30 bg-black/80 backdrop-blur-md py-4">
                 <CategoryMenu 
                     categories={categories}
                     activeCategory={activeCategory}
@@ -34,7 +48,7 @@ const ShopPage: React.FC<ShopPageProps> = ({ products, onAddToCart, onQuickView 
             </div>
             
             {filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-12">
                     {filteredProducts.map(product => (
                         <ProductCard
                             key={product.id}
@@ -45,8 +59,8 @@ const ShopPage: React.FC<ShopPageProps> = ({ products, onAddToCart, onQuickView 
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-16">
-                    <p className="text-text-secondary">No products found in this category.</p>
+                <div className="text-center py-32 border-2 border-dashed border-border-color rounded-2xl">
+                    <p className="text-text-secondary text-lg">Inventory restocking soon. Check back later.</p>
                 </div>
             )}
         </div>

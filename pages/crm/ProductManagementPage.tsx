@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import type { Product } from '../../types';
 import { PlusCircleIcon, EditIcon, Trash2Icon } from '../../components/IconComponents';
@@ -10,7 +11,7 @@ interface ProductManagementPageProps {
     onDeleteProduct: (productId: number) => void;
 }
 
-const ProductManagementPage: React.FC<ProductManagementPageProps> = ({ products, onAddProduct, onUpdateProduct, onDeleteProduct }) => {
+const ProductManagementPage: React.FC<ProductManagementPageProps> = ({ products = [], onAddProduct, onUpdateProduct, onDeleteProduct }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
@@ -46,22 +47,22 @@ const ProductManagementPage: React.FC<ProductManagementPageProps> = ({ products,
                     Add Product
                 </button>
             </div>
-            <div className="bg-component-bg border border-border-color rounded-xl">
+            <div className="bg-component-bg border border-border-color rounded-xl overflow-hidden shadow-sm">
                 <table className="w-full text-sm text-left">
-                    <thead className="text-xs text-text-secondary uppercase border-b border-border-color">
+                    <thead className="text-xs text-text-secondary uppercase border-b border-border-color bg-black/20">
                         <tr>
-                            <th scope="col" className="px-6 py-3">Product Name</th>
-                            <th scope="col" className="px-6 py-3">Category</th>
-                            <th scope="col" className="px-6 py-3">Price</th>
-                            <th scope="col" className="px-6 py-3"><span className="sr-only">Actions</span></th>
+                            <th scope="col" className="px-6 py-4">Product Name</th>
+                            <th scope="col" className="px-6 py-4">Category</th>
+                            <th scope="col" className="px-6 py-4">Price (INR)</th>
+                            <th scope="col" className="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-border-color">
                         {products.map((product) => (
-                            <tr key={product.id} className="border-b border-border-color hover:bg-base-bg">
+                            <tr key={product.id} className="hover:bg-white/5 transition-colors">
                                 <td className="px-6 py-4 font-medium text-text-primary whitespace-nowrap">
                                     <div className="flex items-center">
-                                        <img src={product.imageUrl} alt={product.name} className="w-10 h-10 object-cover rounded-md mr-4" />
+                                        <img src={product.imageUrl} alt={product.name} className="w-12 h-12 object-cover rounded-md mr-4 bg-black" />
                                         {product.name}
                                     </div>
                                 </td>
@@ -69,16 +70,16 @@ const ProductManagementPage: React.FC<ProductManagementPageProps> = ({ products,
                                 <td className="px-6 py-4 text-text-secondary">
                                     {product.offerPrice ? (
                                         <div>
-                                            <span className="text-accent font-semibold">${product.offerPrice.toFixed(2)}</span>
-                                            <span className="ml-2 text-xs line-through">${product.price.toFixed(2)}</span>
+                                            <span className="text-accent font-bold">₹{product.offerPrice.toLocaleString()}</span>
+                                            <span className="ml-2 text-xs line-through opacity-50">₹{product.price.toLocaleString()}</span>
                                         </div>
                                     ) : (
-                                        <span>${product.price.toFixed(2)}</span>
+                                        <span className="font-semibold">₹{product.price.toLocaleString()}</span>
                                     )}
                                 </td>
                                 <td className="px-6 py-4 text-right">
-                                    <button onClick={() => handleEditProductClick(product)} className="p-1 text-text-secondary hover:text-accent"><EditIcon className="w-4 h-4" /></button>
-                                    <button onClick={() => onDeleteProduct(product.id)} className="p-1 text-text-secondary hover:text-red-400 ml-2"><Trash2Icon className="w-4 h-4" /></button>
+                                    <button onClick={() => handleEditProductClick(product)} className="p-2 text-text-secondary hover:text-accent transition-colors"><EditIcon className="w-4 h-4" /></button>
+                                    <button onClick={() => onDeleteProduct(product.id)} className="p-2 text-text-secondary hover:text-red-400 ml-2 transition-colors"><Trash2Icon className="w-4 h-4" /></button>
                                 </td>
                             </tr>
                         ))}

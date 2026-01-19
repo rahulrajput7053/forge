@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import type { Product, CartItem, Order, Customer } from './types';
 import EcommHeader from './components/Ecomm/Header';
 import EcommFooter from './components/Ecomm/Footer';
@@ -16,58 +16,59 @@ interface EcommAppProps {
     products: Product[];
 }
 
-type EcommPage = 'home' | 'shop' | 'contact' | 'cart' | 'orders' | 'payment';
+export type EcommPage = 'home' | 'shop' | 'contact' | 'cart' | 'orders' | 'payment';
 
-const EcommApp: React.FC<EcommAppProps> = ({ onBackToCrm, products }) => {
+const EcommApp: React.FC<EcommAppProps> = ({ onBackToCrm, products = [] }) => {
     const [page, setPage] = useState<EcommPage>('home');
     const [cart, setCart] = useState<CartItem[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
     const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
-    const handleNavigate = (newPage: EcommPage) => {
+    const handleNavigate = useCallback((newPage: EcommPage) => {
         setPage(newPage);
-        window.scrollTo(0, 0);
-    };
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
 
-    const handleAddToCart = (productToAdd: Product) => {
+    const handleAddToCart = useCallback((productToAdd: Product) => {
         setCart(prevCart => {
-            const existingItem = prevCart.find(item => item.id === productToAdd.id);
+            const currentCart = prevCart || [];
+            const existingItem = currentCart.find(item => item.id === productToAdd.id);
             if (existingItem) {
-                return prevCart.map(item =>
+                return currentCart.map(item =>
                     item.id === productToAdd.id ? { ...item, quantity: item.quantity + 1 } : item
                 );
             }
-            return [...prevCart, { ...productToAdd, quantity: 1 }];
+            return [...currentCart, { ...productToAdd, quantity: 1 }];
         });
-    };
+    }, []);
 
-    const handleUpdateQuantity = (productId: number, quantity: number) => {
+    const handleUpdateQuantity = useCallback((productId: number, quantity: number) => {
         if (quantity < 1) return;
         setCart(prevCart =>
-            prevCart.map(item =>
+            (prevCart || []).map(item =>
                 item.id === productId ? { ...item, quantity } : item
             )
         );
-    };
+    }, []);
 
-    const handleRemoveFromCart = (productId: number) => {
-        setCart(prevCart => prevCart.filter(item => item.id !== productId));
-    };
+    const handleRemoveFromCart = useCallback((productId: number) => {
+        setCart(prevCart => (prevCart || []).filter(item => item.id !== productId));
+    }, []);
     
     const handleAddCustomer = (customer: Pick<Customer, 'name' | 'email'>) => {
-        console.log('New customer inquiry:', customer);
-        // In a real app, this would likely be sent to the CRM backend
+        console.log('New customer inquiry logged in CRM:', customer);
     };
 
     const handlePaymentSuccess = () => {
+        const currentCart = cart || [];
         const newOrder: Order = {
             id: `ORD-${Date.now()}`,
             date: new Date().toLocaleDateString(),
-            total: cart.reduce((sum, item) => sum + (item.offerPrice ?? item.price) * item.quantity, 0),
+            total: currentCart.reduce((sum, item) => sum + (item.offerPrice ?? item.price) * item.quantity, 0),
             status: 'Processing',
-            items: [...cart],
+            items: [...currentCart],
         };
-        setOrders(prevOrders => [newOrder, ...prevOrders]);
+        setOrders(prevOrders => [newOrder, ...(prevOrders || [])]);
         setCart([]);
         handleNavigate('orders');
     };
@@ -80,8 +81,9 @@ const EcommApp: React.FC<EcommAppProps> = ({ onBackToCrm, products }) => {
         setQuickViewProduct(null);
     };
 
-    const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const cartTotal = cart.reduce((sum, item) => sum + (item.offerPrice ?? item.price) * item.quantity, 0);
+    const safeCart = cart || [];
+    const cartItemCount = safeCart.reduce((sum, item) => sum + item.quantity, 0);
+    const cartTotal = safeCart.reduce((sum, item) => sum + (item.offerPrice ?? item.price) * item.quantity, 0);
 
     const renderPage = () => {
         switch (page) {
@@ -92,7 +94,7 @@ const EcommApp: React.FC<EcommAppProps> = ({ onBackToCrm, products }) => {
             case 'contact':
                 return <ContactPage onAddCustomer={handleAddCustomer} />;
             case 'cart':
-                return <CartPage cartItems={cart} onUpdateQuantity={handleUpdateQuantity} onRemoveFromCart={handleRemoveFromCart} onNavigate={handleNavigate} />;
+                return <CartPage cartItems={safeCart} onUpdateQuantity={handleUpdateQuantity} onRemoveFromCart={handleRemoveFromCart} onNavigate={handleNavigate} />;
             case 'payment':
                 return <PaymentPage total={cartTotal} onPaymentSuccess={handlePaymentSuccess} />;
             case 'orders':
@@ -103,7 +105,7 @@ const EcommApp: React.FC<EcommAppProps> = ({ onBackToCrm, products }) => {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-base-bg text-text-primary font-sans">
+        <div className="flex flex-col min-h-screen bg-[#000] text-text-primary font-sans antialiased">
             <EcommHeader 
                 onNavigate={handleNavigate}
                 cartItemCount={cartItemCount}

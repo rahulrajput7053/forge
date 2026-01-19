@@ -1,46 +1,58 @@
+
 import { GoogleGenAI } from "@google/genai";
 import { METRICS_DATA, RECENT_CUSTOMERS, SALES_DATA } from "../constants";
-
-// Fix: Implemented a real Gemini API call to generate weekly summaries.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 /**
  * Calls the Gemini API to get a weekly summary based on dashboard data.
  */
 export const getWeeklySummary = async (): Promise<string> => {
-  console.log("Calling Gemini API...");
+  console.log("Generating insights via Gemini 3...");
 
-  // Prepare data for the prompt, removing non-serializable parts like component functions.
-  const metricsForApi = METRICS_DATA.map(({ icon, ...rest }) => ({
+  // Initialize inside the function to avoid top-level process.env issues during module load
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+  // Defensive data check
+  const metrics = METRICS_DATA || [];
+  const sales = SALES_DATA || [];
+  const customers = RECENT_CUSTOMERS || [];
+
+  const metricsForApi = metrics.map(({ icon, ...rest }) => ({
     ...rest,
-    icon: icon.name, // Send the icon component's name as a string for context.
+    icon: typeof icon === 'function' ? (icon as any).name || 'Icon' : 'Icon',
   }));
 
   const prompt = `
-Based on the following dashboard data, provide a weekly performance review.
+You are InsightCRM AI, a senior retail analyst for "Forge Fabric", a premium streetwear brand.
 
-Data:
-\`\`\`json
-${JSON.stringify({ metrics: metricsForApi, sales: SALES_DATA, customers: RECENT_CUSTOMERS }, null, 2)}
-\`\`\`
+Based on the dashboard data provided, generate a sharp, professional performance review.
 
-Your response must be in Markdown and include:
-- A title, like "**Weekly Performance Review: Key Insights**".
-- Bulleted key insights. Each bullet must start with '*'.
-- A final "Recommendation" section.
+Current Data:
+Metrics: ${JSON.stringify(metricsForApi)}
+Sales Trends: ${JSON.stringify(sales)}
+Top Customers: ${JSON.stringify(customers.map(c => ({ name: c.name, plan: c.plan })))}
+
+Format your response in Markdown:
+1. **Performance Overview**: A 2-sentence executive summary.
+2. **Growth Drivers**: 3 bullet points using '*' on what worked this week.
+3. **Critical Actions**: 2-3 strategic recommendations to increase average order value (AOV) and customer retention.
+4. **Insight Score**: A score out of 100 based on the growth trends.
+
+Keep it punchy, urban, and professional.
   `;
   
   try {
     const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3-flash-preview',
         contents: prompt,
     });
 
-    const summary = response.text;
-    console.log("Gemini response received.");
-    return summary;
+    if (!response || !response.text) {
+        throw new Error("Empty response from AI");
+    }
+
+    return response.text;
   } catch (error) {
-    console.error("Error calling Gemini API:", error);
-    throw new Error("Failed to get summary from Gemini API.");
+    console.error("Gemini API Error:", error);
+    return "Unable to generate insights at this moment. Please check your internet connection or try again later.";
   }
 };

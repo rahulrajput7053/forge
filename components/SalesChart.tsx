@@ -3,23 +3,19 @@ import React from 'react';
 import type { SalesData } from '../types';
 
 // The Recharts library is loaded from a CDN and available on the window object.
-declare const window: {
-  Recharts: any;
-};
+declare const window: any;
 
 interface SalesChartProps {
   data: SalesData[];
 }
 
 export const SalesChart: React.FC<SalesChartProps> = ({ data }) => {
-  // Fix: Move destructuring into the component to ensure window.Recharts is loaded before access.
   const Recharts = window.Recharts;
 
-  // Render a loading state if the Recharts library hasn't been loaded onto the window object yet.
-  if (!Recharts) {
+  if (!Recharts || !Recharts.LineChart) {
     return (
       <div className="bg-component-bg border border-border-color rounded-xl p-6 h-[400px] flex items-center justify-center">
-        <p className="text-text-secondary">Loading Chart...</p>
+        <p className="text-text-secondary">Chart library not available.</p>
       </div>
     );
   }

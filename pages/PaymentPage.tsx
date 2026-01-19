@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 
 interface PaymentPageProps {
@@ -11,7 +12,6 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ onPaymentSuccess, total }) =>
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsProcessing(true);
-        // Simulate payment processing
         setTimeout(() => {
             onPaymentSuccess();
         }, 2000);
@@ -19,37 +19,42 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ onPaymentSuccess, total }) =>
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="max-w-lg mx-auto bg-component-bg border border-border-color rounded-lg p-8">
-                <h1 className="text-3xl font-bold text-text-primary mb-2 text-center">Checkout</h1>
-                <p className="text-text-secondary mb-8 text-center">Total: <span className="font-bold text-accent">${total.toFixed(2)}</span></p>
+            <div className="max-w-lg mx-auto bg-component-bg border border-border-color p-10 shadow-2xl">
+                <h1 className="text-4xl font-black text-text-primary mb-4 text-center uppercase tracking-tighter">Secure Checkout</h1>
+                <p className="text-text-secondary mb-10 text-center text-sm uppercase tracking-widest">
+                    Amount Payable: <span className="font-black text-accent ml-2">₹{total.toLocaleString()}</span>
+                </p>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label htmlFor="card-number" className="block text-sm font-medium text-text-secondary">Card Number</label>
-                        <input type="text" id="card-number" placeholder="**** **** **** ****" required className="mt-1 block w-full bg-base-bg border border-border-color rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-accent focus:border-accent" />
+                <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="space-y-2">
+                        <label htmlFor="card-number" className="block text-[10px] font-black text-text-secondary uppercase tracking-widest">Card Number</label>
+                        <input type="text" id="card-number" placeholder="XXXX XXXX XXXX XXXX" required className="w-full bg-black border border-border-color py-4 px-4 text-white focus:outline-none focus:border-accent transition-colors tracking-widest" />
                     </div>
-                    <div className="grid grid-cols-3 gap-4">
-                        <div className="col-span-2">
-                            <label htmlFor="expiry-date" className="block text-sm font-medium text-text-secondary">Expiry Date</label>
-                            <input type="text" id="expiry-date" placeholder="MM / YY" required className="mt-1 block w-full bg-base-bg border border-border-color rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-accent focus:border-accent" />
+                    <div className="grid grid-cols-2 gap-8">
+                        <div className="space-y-2">
+                            <label htmlFor="expiry-date" className="block text-[10px] font-black text-text-secondary uppercase tracking-widest">Expiry</label>
+                            <input type="text" id="expiry-date" placeholder="MM / YY" required className="w-full bg-black border border-border-color py-4 px-4 text-white focus:outline-none focus:border-accent transition-colors" />
                         </div>
-                        <div>
-                            <label htmlFor="cvc" className="block text-sm font-medium text-text-secondary">CVC</label>
-                            <input type="text" id="cvc" placeholder="***" required className="mt-1 block w-full bg-base-bg border border-border-color rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-accent focus:border-accent" />
+                        <div className="space-y-2">
+                            <label htmlFor="cvc" className="block text-[10px] font-black text-text-secondary uppercase tracking-widest">CVC</label>
+                            <input type="password" id="cvc" placeholder="***" required className="w-full bg-black border border-border-color py-4 px-4 text-white focus:outline-none focus:border-accent transition-colors" />
                         </div>
                     </div>
-                     <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-text-secondary">Name on Card</label>
-                        <input type="text" id="name" placeholder="John Doe" required className="mt-1 block w-full bg-base-bg border border-border-color rounded-md py-2 px-3 shadow-sm focus:outline-none focus:ring-accent focus:border-accent" />
+                     <div className="space-y-2">
+                        <label htmlFor="name" className="block text-[10px] font-black text-text-secondary uppercase tracking-widest">Cardholder Name</label>
+                        <input type="text" id="name" placeholder="YOUR NAME" required className="w-full bg-black border border-border-color py-4 px-4 text-white focus:outline-none focus:border-accent transition-colors uppercase" />
                     </div>
-                    <div>
+                    <div className="pt-4">
                         <button
                             type="submit"
                             disabled={isProcessing}
-                            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-accent hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent disabled:opacity-50"
+                            className="w-full bg-white text-black font-black py-5 uppercase tracking-widest transition-all duration-300 hover:bg-accent hover:text-white disabled:opacity-50"
                         >
-                            {isProcessing ? 'Processing...' : `Pay $${total.toFixed(2)}`}
+                            {isProcessing ? 'Processing Transaction...' : `Pay ₹${total.toLocaleString()}`}
                         </button>
+                        <p className="text-[9px] text-text-secondary text-center mt-6 uppercase tracking-[0.2em] opacity-50">
+                            Encrypted & Secure 256-bit SSL Connection
+                        </p>
                     </div>
                 </form>
             </div>

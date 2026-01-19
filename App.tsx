@@ -10,10 +10,10 @@ type AppView = 'crm' | 'ecomm';
 
 function App() {
   const [view, setView] = useState<AppView>('ecomm');
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS || []);
 
   useEffect(() => {
-    document.title = view === 'crm' ? 'InsightCRM' : 'Forge Fabric';
+    document.title = view === 'crm' ? 'InsightCRM | Admin' : 'Forge Fabric | Streetwear';
   }, [view]);
 
   const showCrm = () => setView('crm');
@@ -22,23 +22,23 @@ function App() {
   const handleAddProduct = (productData: Omit<Product, 'id'>) => {
     const newProduct: Product = {
       ...productData,
-      id: Date.now(), // Generate a unique ID
+      id: Date.now(),
     };
-    setProducts(prevProducts => [newProduct, ...prevProducts]);
+    setProducts(prevProducts => [newProduct, ...(prevProducts || [])]);
   };
 
   const handleUpdateProduct = (updatedProduct: Product) => {
     setProducts(prevProducts =>
-      prevProducts.map(p => (p.id === updatedProduct.id ? updatedProduct : p))
+      (prevProducts || []).map(p => (p.id === updatedProduct.id ? updatedProduct : p))
     );
   };
 
   const handleDeleteProduct = (productId: number) => {
-    setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
+    setProducts(prevProducts => (prevProducts || []).filter(p => p.id !== productId));
   };
 
   return (
-    <div className="App">
+    <div className="App font-sans selection:bg-accent selection:text-white">
         {view === 'crm' && (
             <CrmApp
                 onLaunchEcomm={showEcomm}
