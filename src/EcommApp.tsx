@@ -128,3 +128,4 @@ const EcommApp: React.FC<EcommAppProps> = ({ onBackToCrm, products = [] }) => {
 };
 
 export default EcommApp;
+
